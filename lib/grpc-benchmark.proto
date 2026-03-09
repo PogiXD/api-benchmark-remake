@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package benchmark;
+
+// Richiesta generica usata da api-benchmark
+// per chiamare il tuo server gRPC.
+message BenchmarkRequest {
+  // Nome logico del metodo (es. "GetUsers", "HealthCheck", ecc.)
+  string method = 1;
+
+  // Payload arbitrario (JSON serializzato in bytes nel tuo adapter).
+  bytes payload = 2;
+}
+
+// Risposta generica che il tuo server restituisce
+// all'adapter di api-benchmark.
+message BenchmarkResponse {
+  // Codice di stato gRPC simulato (0 = OK).
+  int32 status = 1;
+
+  // Corpo risposta (tipicamente JSON serializzato in bytes).
+  bytes body = 2;
+
+  // Messaggio di stato.
+  string message = 3;
+}
+
+service BenchmarkService {
+  rpc Call (BenchmarkRequest) returns (BenchmarkResponse);
+}
+

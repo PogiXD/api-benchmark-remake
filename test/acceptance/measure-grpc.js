@@ -75,7 +75,7 @@ describe('measure function with gRPC endpoints', function () {
         routeResult.stats.sample.length.should.be.eql(5);
 
         // href deve essere costruito correttamente da SuitesManager
-        routeResult.href.should.be.eql('grpc:///UserService/GetUser');
+        routeResult.href.should.be.eql('grpc:///Service/get');
 
         // la response deve avere la forma attesa
         routeResult.response.type.should.be.eql('application/grpc+json');

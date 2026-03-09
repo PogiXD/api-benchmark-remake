@@ -99,7 +99,7 @@ describe('measure function', function(){
       }
     };
 
-    apiBenchmark.measure(serversToBenchmark, routesToBenchmark, function(err, results){
+    apiBenchmark.measure(serversToBenchmark, routesToBenchmark, { minSamples: 2, maxTime: 5 }, function(err, results){
       err.should.be.eql('Expected Status code was 200 but I got a 403 for My api/errorRoute');
       should.not.exist(results);
       done();
