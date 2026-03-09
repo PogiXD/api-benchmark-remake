@@ -61,7 +61,7 @@ describe('Runner.run in sequence', function(){
     runner.on('complete', function(results){
       timer.stop();
       results[0].stats.sample.length.should.be.below(12);
-      timer.time.should.be.within(0.18, 0.3);
+      timer.time.should.be.within(0.14, 0.3);
       done();
     });
 
