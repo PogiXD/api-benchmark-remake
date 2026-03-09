@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package benchmark;
+
+// Generic key/value metadata
+message Metadata {
+  string key = 1;
+  string value = 2;
+}
+
+// ── Unary RPC ────────────────────────────────────────────────────────────────
+message BenchmarkRequest {
+  string method  = 1;   // logical method name (e.g. "getUser")
+  bytes  payload = 2;   // arbitrary serialized body (JSON, protobuf, …)
+  repeated Metadata metadata = 3;
+}
+
+message BenchmarkResponse {
+  int32  status  = 1;   // application-level status code (0 = OK)
+  bytes  body    = 2;   // response payload
+  string message = 3;   // optional human-readable message
+}
+
+// ── Service ──────────────────────────────────────────────────────────────────
+service BenchmarkService {
+  // Single request / single response – used for latency benchmarking
+  rpc Call (BenchmarkRequest) returns (BenchmarkResponse);
+}
