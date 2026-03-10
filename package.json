@@ -30,6 +30,7 @@
     "@grpc/grpc-js": "^1.14.3",
     "@grpc/proto-loader": "^0.8.0",
     "give-me": "0.1.0",
+    "soap": "^1.8.0",
     "superagent": "3.8.2",
     "underscore": "1.12.1"
   },

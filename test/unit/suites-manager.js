@@ -12,7 +12,8 @@ var fakeAgent = new testAgent.FakeAgent(),
     debugHelper = new DebugHelper(),
     agents = {
       http: fakeAgent,
-      grpc: { make: function () {} }
+  grpc: { make: function () {} },
+  soap: { make: function () {} }
     };
 
 describe('SuitesManager.addEndpoints function', function(){
@@ -96,7 +97,7 @@ describe('SuitesManager.logFinalComparisonResult function', function(){
     };
 
     var fakeLogger = new FakeLogger(),
-        suites = new SuitesManager(fakeAgent, fakeLogger);
+      suites = new SuitesManager(agents, fakeLogger);
 
     suites.logFinalComparisonResult(results);
 
@@ -112,10 +113,12 @@ describe('SuitesManager.addServices protocol selection', function () {
 
     var fakeHttpAgent = new testAgent.FakeAgent();
     var fakeGrpcAgent = { make: function () {} };
+    var fakeSoapAgent = { make: function () {} };
 
     var agents = {
       http: fakeHttpAgent,
-      grpc: fakeGrpcAgent
+      grpc: fakeGrpcAgent,
+      soap: fakeSoapAgent
     };
 
     var suites = new SuitesManager(agents, debugHelper);
@@ -145,10 +148,12 @@ describe('SuitesManager.addServices protocol selection', function () {
 
     var fakeHttpAgent = new testAgent.FakeAgent();
     var fakeGrpcAgent = { make: function () {} };
+    var fakeSoapAgent = { make: function () {} };
 
     var agents = {
       http: fakeHttpAgent,
-      grpc: fakeGrpcAgent
+      grpc: fakeGrpcAgent,
+      soap: fakeSoapAgent
     };
 
     var suites = new SuitesManager(agents, debugHelper);
@@ -172,6 +177,50 @@ describe('SuitesManager.addServices protocol selection', function () {
       .addServices({ 'My api': 'grpc://localhost:50051/' });
 
     capturedAgent.should.be.eql(fakeGrpcAgent);
+
+    requestHandler.setup = originalSetup;
+
+    done();
+  });
+
+  it('should use soap agent when endpoint.protocol is "soap"', function (done) {
+
+    var fakeHttpAgent = new testAgent.FakeAgent();
+    var fakeGrpcAgent = { make: function () {} };
+    var fakeSoapAgent = { make: function () {} };
+
+    var agents = {
+      http: fakeHttpAgent,
+      grpc: fakeGrpcAgent,
+      soap: fakeSoapAgent
+    };
+
+    var suites = new SuitesManager(agents, debugHelper);
+
+    var capturedAgent = null;
+    var capturedRoute = null;
+    var originalSetup = requestHandler.setup;
+
+    requestHandler.setup = function (routeName, routeHref, route, requestAgent) {
+      capturedAgent = requestAgent;
+      capturedRoute = route;
+    };
+
+    suites
+      .setOptions({})
+      .addEndpoints({
+        soapRoute: {
+          protocol: 'soap',
+          wsdl: 'C:/temp/service.wsdl',
+          operation: 'GetUser',
+          data: { id: 10 }
+        }
+      })
+      .addServices({ 'My api': 'http://localhost:3000/wsdl' });
+
+    capturedAgent.should.be.eql(fakeSoapAgent);
+    capturedRoute.endpoint.endpoint.should.be.eql('http://localhost:3000/wsdl');
+    capturedRoute.endpoint.requestData.should.be.eql({ id: 10 });
 
     requestHandler.setup = originalSetup;
 

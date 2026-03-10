@@ -117,6 +117,39 @@ apiBenchmark.compare(services, routes, function(err, results) {
 });
 ```
 
+SOAP services are supported as well.
+
+```js
+var path = require('path');
+var apiBenchmark = require('api-benchmark');
+
+var services = {
+  soapServer1: 'http://localhost:8080/UserService',
+  soapServer2: 'http://localhost:8081/UserService'
+};
+
+var routes = {
+  getUser: {
+    protocol: 'soap',
+    wsdl: path.join(__dirname, 'user-service.wsdl'),
+    operation: 'GetUser',
+    requestData: {
+      id: 42
+    },
+    soapHeaders: [
+      { AuthToken: 'my-token' }
+    ],
+    headers: {
+      Authorization: 'Bearer token'
+    }
+  }
+};
+
+apiBenchmark.compare(services, routes, function(err, results) {
+  console.log(results);
+});
+```
+
 ### getHtml(results, callback)
 
 Given a results object, gets the html report.
@@ -148,6 +181,10 @@ apiBenchmark.measure(service, routes, function(err, results) {
 
 (String): the route to benchmark
 
+#### protocol
+
+(String, default 'http'): supported values are 'http', 'grpc' and 'soap'.
+
 #### headers
 
 (Object): the headers to send. In case of function (that has to return an object) it will be evaulated for each request.
@@ -155,6 +192,22 @@ apiBenchmark.measure(service, routes, function(err, results) {
 #### data
 
 (Object): the data sent with the request. In case of function (that has to return an object) it will be evaulated for each request.
+
+#### wsdl
+
+(String): required for SOAP routes. Can be a local filesystem path or a remote WSDL url.
+
+#### operation
+
+(String): required for SOAP routes. It is the SOAP operation name to invoke.
+
+#### requestData
+
+(Object): SOAP request payload. In case of function (that has to return an object) it will be evaulated for each request.
+
+#### soapHeaders
+
+(Array|Object): SOAP headers to append to the envelope. In case of function (that has to return an array or object) it will be evaulated for each request.
 
 #### query
 

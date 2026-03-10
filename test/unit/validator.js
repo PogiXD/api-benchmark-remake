@@ -35,6 +35,29 @@ describe('Validator.checkEndpoints function', function(){
     done();
   });
 
+  it('should accept SOAP endpoints without validating the SOAP operation as an http verb', function(done){
+    var result = validator.checkEndpoints({
+      soapRoute: {
+        protocol: 'soap',
+        wsdl: './test.wsdl',
+        operation: 'GetUser'
+      }
+    });
+    result.should.be.eql(true);
+    done();
+  });
+
+  it('should correctly return an error if a SOAP endpoint is missing wsdl or operation', function(done){
+    var result = validator.checkEndpoints({
+      soapRoute: {
+        protocol: 'soap',
+        wsdl: './test.wsdl'
+      }
+    });
+    result.should.be.eql('Endpoints argument is not valid - SOAP endpoints require both wsdl and operation');
+    done();
+  });
+
 });
 
 describe('Validator.checkServices function', function(){

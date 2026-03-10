@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+  name="BenchmarkService"
+  targetNamespace="http://example.com/benchmark"
+  xmlns:tns="http://example.com/benchmark"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <xsd:schema targetNamespace="http://example.com/benchmark">
+      <xsd:element name="GetMessageRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="name" type="xsd:string" minOccurs="0"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetMessageResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="message" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+
+  <message name="GetMessageSoapIn">
+    <part name="parameters" element="tns:GetMessageRequest"/>
+  </message>
+  <message name="GetMessageSoapOut">
+    <part name="parameters" element="tns:GetMessageResponse"/>
+  </message>
+
+  <portType name="BenchmarkPortType">
+    <operation name="GetMessage">
+      <input message="tns:GetMessageSoapIn"/>
+      <output message="tns:GetMessageSoapOut"/>
+    </operation>
+  </portType>
+
+  <binding name="BenchmarkBinding" type="tns:BenchmarkPortType">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="GetMessage">
+      <soap:operation soapAction="GetMessage"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="BenchmarkService">
+    <port name="BenchmarkPort" binding="tns:BenchmarkBinding">
+      <soap:address location="http://localhost:3050/wsdl"/>
+    </port>
+  </service>
+</definitions>
